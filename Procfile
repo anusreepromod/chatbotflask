@@ -1,1 +1,1 @@
-web gunicorn chatbot:app
+web gunicorn -b :$PORT chatbot:app

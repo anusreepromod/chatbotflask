@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-bot= ChatBot('ChatBot')
+bot = ChatBot('ChatBot')
 
 trainer = ListTrainer(bot)
 
@@ -17,9 +17,11 @@ for file in os.listdir('data'):
 
     trainer.train(chats)
 
+
 @app.route("/")
 def hello():
     return render_template('chat.html')
+
 
 @app.route("/ask", methods=['POST'])
 def ask():
@@ -32,34 +34,37 @@ def ask():
 
         if bot_response.confidence > 0.1:
 
-            bot_response = str(bot_response)      
+            bot_response = str(bot_response)
             print(bot_response)
-            return jsonify({'status':'OK','answer':bot_response})
- 
+            return jsonify({'status': 'OK', 'answer': bot_response})
+
         elif message == ("bye"):
 
-            bot_response='Hope to see you soon'
+            bot_response = 'Hope to see you soon'
 
             print(bot_response)
-            return jsonify({'status':'OK','answer':bot_response})
+            return jsonify({'status': 'OK', 'answer': bot_response})
 
             break
 
         else:
-        
+
             try:
-                url  = "https://en.wikipedia.org/wiki/"+ message
+                url = "https://en.wikipedia.org/wiki/" + message
                 page = get(url).text
-                soup = BeautifulSoup(page,"html.parser")
-                p    = soup.find_all("p")
-                return jsonify({'status':'OK','answer':p[1].text})
+                soup = BeautifulSoup(page, "html.parser")
+                p = soup.find_all("p")
+                return jsonify({'status': 'OK', 'answer': p[1].text})
 
             except IndexError as error:
 
                 bot_response = 'Sorry i have no idea about that.'
-            
+
                 print(bot_response)
-                return jsonify({'status':'OK','answer':bot_response})
+                return jsonify({'status': 'OK', 'answer': bot_response})
+
+
+PORT = int(os.environ.get('PORT', 5000))
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host='0.0.0.0', port=PORT, debug=True)
